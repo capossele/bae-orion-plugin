@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-# Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018, Digital Catapult
 
-# This file belongs to the secured orion plugin
+# This file belongs to the orion context broker plugin
 # of the Business API Ecosystem.
 
 # This program is free software: you can redistribute it and/or modify
@@ -17,6 +18,8 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Author: Angelo Capossele
 
 from __future__ import unicode_literals
 
@@ -72,6 +75,10 @@ class KeystoneClient:
 
     def get_application_by_id(self, application_id):
         return self._make_get_request(self._server + '/v3/OS-OAUTH2/consumers/' + application_id)
+    
+    def get_azf_domain_by_app_id(self, application_id):
+        resp = self._make_get_request(self._server + '/v3/OS-OAUTH2/consumers/' + application_id)
+        return resp['consumer']['ac_domain']
 
     def get_domain_by_id(self, domain_id):
         return self._make_get_request(self._server + '/v3/domains/' + domain_id)

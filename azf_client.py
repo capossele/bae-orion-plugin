@@ -22,8 +22,28 @@
 
 from __future__ import unicode_literals
 
-KEYSTONE_USER = 'idm'
-KEYSTONE_PWD = 'idm'
-ADMIN_DOMAIN = 'Default'
-SELLER_ROLE = ''
+import requests
+import xml.etree.ElementTree as ET
 
+class AzfClient:
+
+    _server = None
+    _domain = None
+
+    def __init__(self, domain, protocol, host, port):
+        self._domain = domain
+        self._server = protocol + '://' + host + ':' + unicode(port)
+       
+
+    def _make_get_request(self, url):
+        resp = requests.get(url)
+        resp.raise_for_status()
+        #tree = ET.parse(resp.text)
+        #root = tree.getroot()
+        root = ET.fromstring(resp.content)
+        return root
+
+    def get_pap_policies(self):
+        return self._make_get_request(self._server + '/authzforce-ce/domains/' + self._domain + '/pap/policies')
+
+   

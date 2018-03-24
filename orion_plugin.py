@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2018, Digital Catapult
 
-# This file belongs to the secured orion plugin
+# This file belongs to the orion context broker plugin
 # of the Business API Ecosystem.
 
 # This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Author: Angelo Capossele
 
 from __future__ import unicode_literals
 
