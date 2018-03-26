@@ -9,7 +9,7 @@
   "form": {
     "application_id": {
       "type": "text",
-      "label": "Application ID (Orion ID registered on the IDM)",
+      "label": "Application ID (Orion ID registered on the IDM, e.g., c0fc8c23f7044861ad2e941d9774729e)",
       "placeholder": "Application ID",
       "mandatory": true
     },

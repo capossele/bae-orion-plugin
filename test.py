@@ -39,6 +39,8 @@ class Test:
             print "URL not valid"
         role_name = service + ':' + resource
         print role_name
+
+        print keystone_client.get_role_id_by_name('c0fc8c23f7044861ad2e941d9774729e', role_name)
         # json_role = _pack_json_role('consumer-role3', 'c0fc8c23f7044861ad2e941d9774729e')
         # print json.dumps(json_role)
         # if not (keystone_client.get_role_id_by_name('c0fc8c23f7044861ad2e941d9774729e','consumer-role3')):

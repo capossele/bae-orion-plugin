@@ -36,14 +36,15 @@ from wstore.store_commons.errors import ConflictError
 
 from .config import *
 from .keystone_client import KeystoneClient
-
-def _pack_json_role(name, application_id):
-    data = json.dumps({'role' : {
-                        'name' : name, 
-                        'application_id' : application_id}})
-    return json.loads(data)
+import json
 
 class OrionPlugin(Plugin):
+
+    def _pack_json_role(self, name, application_id):
+        data = json.dumps({'role' : {
+                            'name' : name, 
+                            'application_id' : application_id}})
+        return json.loads(data)
 
     def _get_user_id(self, keystone_client, domain_id, username):
         # Get provider and seller role ids
@@ -75,12 +76,17 @@ class OrionPlugin(Plugin):
             domain_id = keystone_client.get_domain_id(ADMIN_DOMAIN)
             provider_id = self._get_user_id(keystone_client, domain_id, provider.name)
         
+            provider_role_name = service + ":provider"
+            provider_role_id = keystone_client.get_role_id_by_name(application_id, provider_role_name)
         except HTTPError:
             raise PluginError('It has not been possible to connect with Keystone')
         
         try:
             # Validate provider permissions
-            keystone_client.check_role(application_id, provider_id, service + ":provider")
+            if provider_role_id:
+                keystone_client.check_role(application_id, provider_id, provider_role_id)
+            else:
+                raise PermissionDenied('You are not authorized to create offerings for the specified Application')
         except HTTPError as e:
             # The role assignment does not exist; thus the user is not authorized
             if e.response.status_code == 404:
@@ -100,7 +106,7 @@ class OrionPlugin(Plugin):
                 raise PluginError("URL not valid")
 
             role_name = service + ':' + resource
-            json_role = _pack_json_role(role_name, application_id)
+            json_role = self._pack_json_role(role_name, application_id)
             if not (keystone_client.get_role_id_by_name(application_id, role_name)):
                 role = keystone_client.create_role(json_role)
 
@@ -111,6 +117,7 @@ class OrionPlugin(Plugin):
         asset.meta_info['role'] = role_name
         asset.meta_info['service'] = service
         asset.meta_info['domain_id'] = domain_id
+        asset.meta_info['application_id'] = application_id
         
         asset.save()
 
@@ -164,7 +171,7 @@ class OrionPlugin(Plugin):
 
             
             # Check the customer user
-            customer_id = self._get_user_id(keystone_client, asset.meta_info['domain_id'], 'mario')
+            customer_id = self._get_user_id(keystone_client, asset.meta_info['domain_id'], order.owner_organization.name)
 
             role_id = keystone_client.get_role_id_by_name(asset.meta_info['application_id'], asset.meta_info['role'])
             if role_id:
