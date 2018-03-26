@@ -3,26 +3,20 @@
   "author": "acapossele",
   "version": "1.0",
   "module": "orion_plugin.OrionPlugin",
-  "media_types": ["NGSI9", "NGSI10"],
+  "media_types": ["NGSIv2"],
   "formats": ["URL"],
   "overrides": [],
   "form": {
     "application_id": {
       "type": "text",
-      "label": "Application ID (Orion ID registered to the IDM)",
+      "label": "Application ID (Orion ID registered on the IDM)",
       "placeholder": "Application ID",
       "mandatory": true
     },
     "service": {
       "type": "text",
-      "label": "Service Path",
-      "placeholder": "Service Path",
-      "mandatory": true
-    },
-    "role": {
-      "type": "text",
-      "label": "Offered Role",
-      "placeholder": "Offered Role",
+      "label": "Fiware-Service (e.g., TenantRZ1)",
+      "placeholder": "Fiware-Service",
       "mandatory": true
     }
   }

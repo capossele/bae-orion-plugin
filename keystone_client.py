@@ -122,15 +122,37 @@ class KeystoneClient:
                 return True
         return False 
 
+    def create_permission(self, permission):
+        resp = requests.post(self._server + '/v3/OS-ROLES/permissions',
+                            json = permission,
+                            headers={'X-Auth-Token': self._access_token})
+        resp.raise_for_status()
+        return resp
+
+    def create_role(self, role):
+        resp = requests.post(self._server + '/v3/OS-ROLES/roles',
+                            json = role,
+                            headers={'X-Auth-Token': self._access_token})
+        resp.raise_for_status()
+        return resp
+
+    def grant_permission_to_role(self, permission_id, role_id):
+        resp = requests.put(self._server + '/v3/OS-ROLES/roles/' + role_id + '/permissions/' + permission_id, headers={
+            'X-Auth-Token': self._access_token
+        })
+        resp.raise_for_status()
+        return resp
 
     def grant_role(self, application_id, user_id, role_id):
         resp = requests.put(self._server + '/v3/OS-ROLES/users/' + user_id + '/applications/' + application_id + '/roles/' + role_id, headers={
             'X-Auth-Token': self._access_token
         })
         resp.raise_for_status()
+        return resp
 
     def revoke_role(self, application_id, user_id, role_id):
         resp = requests.delete(self._server + '/v3/OS-ROLES/users/' + user_id + '/applications/' + application_id + '/roles/' + role_id, headers={
             'X-Auth-Token': self._access_token
         })
         resp.raise_for_status()  
+        return resp

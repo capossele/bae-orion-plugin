@@ -1,4 +1,5 @@
 *.DS_Store
 *.pyc
 __init__.py
-test.py
+testing.py
+./test
