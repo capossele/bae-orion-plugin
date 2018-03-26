@@ -70,15 +70,8 @@ class KeystoneClient:
         resp.raise_for_status()
         return resp.json()
 
-    # def get_project_by_name(self, project_name):
-    #     return self._make_get_request(self._server + '/v3/projects?name=' + project_name)
-
     def get_application_by_id(self, application_id):
         return self._make_get_request(self._server + '/v3/OS-OAUTH2/consumers/' + application_id)
-    
-    def get_azf_domain_by_app_id(self, application_id):
-        resp = self._make_get_request(self._server + '/v3/OS-OAUTH2/consumers/' + application_id)
-        return resp['consumer']['ac_domain']
 
     def get_domain_by_id(self, domain_id):
         return self._make_get_request(self._server + '/v3/domains/' + domain_id)
@@ -87,23 +80,16 @@ class KeystoneClient:
         resp = self._make_get_request(self._server + '/v3/domains?name=' + domain_name)
         for domain_id in resp['domains']:
             return domain_id['id']
-    # def get_role_by_name(self, role_name):
-    #     return self._make_get_request(self._server + '/v3/roles?name=' + role_name)
 
     def get_role_by_name(self, role_name):
         return self._make_get_request(self._server + '/v3/roles?name=' + role_name)
 
-    #http://idm.docker:5000/v3/OS-ROLES/roles?application_id=47ca01dd15b446b5a5f9f08ad495f52a&name=Consumer
     def get_role_id_by_name(self, application_id, role_name):
         resp = self._make_get_request(self._server + '/v3/OS-ROLES/roles?application_id=' + application_id + '&name=' + role_name)
         for role in resp['roles']:
             if role['name'] == role_name:
                 return role['id']
         return False
-    
-
-    # def get_user_by_name(self, username):
-    #     return self._make_get_request(self._server + '/v3/users?name=' + username)
 
     def get_user_by_username(self, username):
         return self._make_get_request(self._server + '/v3/users?username=' + username)
@@ -122,24 +108,10 @@ class KeystoneClient:
                 return True
         return False 
 
-    def create_permission(self, permission):
-        resp = requests.post(self._server + '/v3/OS-ROLES/permissions',
-                            json = permission,
-                            headers={'X-Auth-Token': self._access_token})
-        resp.raise_for_status()
-        return resp
-
     def create_role(self, role):
         resp = requests.post(self._server + '/v3/OS-ROLES/roles',
                             json = role,
                             headers={'X-Auth-Token': self._access_token})
-        resp.raise_for_status()
-        return resp
-
-    def grant_permission_to_role(self, permission_id, role_id):
-        resp = requests.put(self._server + '/v3/OS-ROLES/roles/' + role_id + '/permissions/' + permission_id, headers={
-            'X-Auth-Token': self._access_token
-        })
         resp.raise_for_status()
         return resp
 
