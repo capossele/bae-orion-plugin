@@ -37,6 +37,11 @@ from wstore.store_commons.errors import ConflictError
 from .config import *
 from .keystone_client import KeystoneClient
 
+def _pack_json_role(name, application_id):
+    data = json.dumps({'role' : {
+                        'name' : name, 
+                        'application_id' : application_id}})
+    return json.loads(data)
 
 class OrionPlugin(Plugin):
 
@@ -53,10 +58,11 @@ class OrionPlugin(Plugin):
     def on_post_product_spec_validation(self, provider, asset):
         # Extract related information from the asset
         parsed_url = urlparse(asset.download_link)
+        service = asset.meta_info['service']
 
         try:
             # Log the plugin in the Keystone instance
-            keystone_client = KeystoneClient(KEYSTONE_USER, KEYSTONE_PWD, ADMIN_DOMAIN, parsed_url.scheme, 'idm.docker')
+            keystone_client = KeystoneClient(KEYSTONE_USER, KEYSTONE_PWD, ADMIN_DOMAIN, 'http', 'idm.docker')
 
             # Check that provided application exists
             application_info = keystone_client.get_application_by_id(asset.meta_info['application_id'])
@@ -74,19 +80,36 @@ class OrionPlugin(Plugin):
         
         try:
             # Validate provider permissions
-            keystone_client.check_role(application_id, provider_id, "provider")
+            keystone_client.check_role(application_id, provider_id, service + ":provider")
         except HTTPError as e:
             # The role assignment does not exist; thus the user is not authorized
             if e.response.status_code == 404:
                 raise PermissionDenied('You are not authorized to create offerings for the specified Application')
             else:
                 raise PluginError('It has not been possible to connect with Keystone')
-            
-        #TODO create authroization role for the asset
-        #asset.meta_info['role'] = role_id
-        #         
+        
+        #create authroization role for the asset
+        try:
+            s = parsed_url.path
+            resource = ""
+            if (s.find('/v2') == 0) and (s.find('/v2/entities') == -1):
+                resource = s.split('/')[1]
+            elif s.find('/v2/entities/') == 0:
+                resource = s.split('/')[3]
+            else:
+                raise PluginError("URL not valid")
+
+            role_name = service + ':' + resource
+            json_role = _pack_json_role(role_name, application_id)
+            if not (keystone_client.get_role_id_by_name(application_id, role_name)):
+                role = keystone_client.create_role(json_role)
+
+        except HTTPError as e:
+            raise PluginError(e)
+         
         # Save related metadata to avoid future requests
-        #asset.meta_info['application_id'] = application_id
+        asset.meta_info['role'] = role_name
+        asset.meta_info['service'] = service
         asset.meta_info['domain_id'] = domain_id
         
         asset.save()
