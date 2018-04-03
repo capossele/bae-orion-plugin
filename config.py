@@ -22,8 +22,5 @@
 
 from __future__ import unicode_literals
 
-KEYSTONE_USER = 'idm'
-KEYSTONE_PWD = 'idm'
-ADMIN_DOMAIN = 'Default'
-SELLER_ROLE = ''
+from services_settings import *
 

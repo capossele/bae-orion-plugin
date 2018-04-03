@@ -63,7 +63,7 @@ class OrionPlugin(Plugin):
 
         try:
             # Log the plugin in the Keystone instance
-            keystone_client = KeystoneClient(KEYSTONE_USER, KEYSTONE_PWD, ADMIN_DOMAIN, 'http', 'idm.docker')
+            keystone_client = KeystoneClient(KEYSTONE_USER, KEYSTONE_PWD, ADMIN_DOMAIN, KEYSTONE_PROTOCOL, KEYSTONE_HOST, KEYSTONE_PORT)
 
             # Check that provided application exists
             application_info = keystone_client.get_application_by_id(asset.meta_info['application_id'])
@@ -167,7 +167,7 @@ class OrionPlugin(Plugin):
         #parsed_url = urlparse(asset.download_link)
 
         try:
-            keystone_client = KeystoneClient(KEYSTONE_USER, KEYSTONE_PWD, ADMIN_DOMAIN, 'http', 'idm.docker')
+            keystone_client = KeystoneClient(KEYSTONE_USER, KEYSTONE_PWD, ADMIN_DOMAIN, KEYSTONE_PROTOCOL, KEYSTONE_HOST, KEYSTONE_PORT)
 
             
             # Check the customer user
