@@ -22,5 +22,5 @@
 
 from __future__ import unicode_literals
 
-from services_settings import *
+from settings import *
 

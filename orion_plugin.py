@@ -83,9 +83,9 @@ class OrionPlugin(Plugin):
         
         try:
             # Validate provider permissions
-            if provider_role_id:
-                keystone_client.check_role(application_id, provider_id, provider_role_id)
-            else:
+            if not provider_role_id:
+                raise PermissionDenied('You are not authorized to create offerings for the specified Application')
+            if not keystone_client.check_role(application_id, provider_id, provider_role_id):
                 raise PermissionDenied('You are not authorized to create offerings for the specified Application')
         except HTTPError as e:
             # The role assignment does not exist; thus the user is not authorized
