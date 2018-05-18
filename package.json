@@ -17,7 +17,7 @@
       "type": "text",
       "label": "Fiware-Service (e.g., TenantRZ1)",
       "placeholder": "Fiware-Service",
-      "mandatory": true
+      "mandatory": false
     }
   }
 }

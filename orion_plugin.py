@@ -24,7 +24,7 @@ from __future__ import unicode_literals
 
 import requests
 from requests.exceptions import HTTPError
-from urlparse import urlparse
+from urlparse import parse_qs, urlparse
 from urllib import quote_plus
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
@@ -59,6 +59,7 @@ class OrionPlugin(Plugin):
     def on_post_product_spec_validation(self, provider, asset):
         # Extract related information from the asset
         parsed_url = urlparse(asset.download_link)
+        
         service = asset.meta_info['service']
 
         try:
@@ -76,7 +77,8 @@ class OrionPlugin(Plugin):
             domain_id = keystone_client.get_domain_id(ADMIN_DOMAIN)
             provider_id = self._get_user_id(keystone_client, domain_id, provider.name)
         
-            provider_role_name = service + ":provider"
+            #provider_role_name = service + ":provider"
+            provider_role_name = "provider"
             provider_role_id = keystone_client.get_role_id_by_name(application_id, provider_role_name)
         except HTTPError:
             raise PluginError('It has not been possible to connect with Keystone')
@@ -97,15 +99,21 @@ class OrionPlugin(Plugin):
         #create authroization role for the asset
         try:
             s = parsed_url.path
+            parsed_query = parse_qs(parsed_url.query, keep_blank_values=True)
             resource = ""
-            if (s.find('/v2') == 0) and (s.find('/v2/entities') == -1):
-                resource = s.split('/')[1]
-            elif s.find('/v2/entities/') == 0:
-                resource = s.split('/')[3]
-            else:
+            resource_type = ""
+            
+            if (s.find('/v2/entities') == -1):
                 raise PluginError("URL not valid")
 
-            role_name = service + ':' + resource
+            if (len(parsed_query['type'])):
+                resource_type = parsed_query['type'][0]
+            
+            if (len(parsed_query['id'])):
+                resource = parsed_query['id'][0]
+
+            #role_name = service + ':' + resource
+            role_name = service + '|' + 'GET' + '|' + resource_type  + '|' + resource
             json_role = self._pack_json_role(role_name, application_id)
             if not (keystone_client.get_role_id_by_name(application_id, role_name)):
                 role = keystone_client.create_role(json_role)
