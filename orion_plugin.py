@@ -106,10 +106,10 @@ class OrionPlugin(Plugin):
             if (s.find('/v2/entities') == -1):
                 raise PluginError("URL not valid")
 
-            if (len(parsed_query['type'])):
+            if 'type' in parsed_query:
                 resource_type = parsed_query['type'][0]
             
-            if (len(parsed_query['id'])):
+            if 'id' in parsed_query:
                 resource = parsed_query['id'][0]
 
             #role_name = service + ':' + resource
