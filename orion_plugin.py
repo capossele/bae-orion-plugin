@@ -102,6 +102,7 @@ class OrionPlugin(Plugin):
             parsed_query = parse_qs(parsed_url.query, keep_blank_values=True)
             resource = ""
             resource_type = ""
+            attr = ""
             
             if (s.find('/v2/entities') == -1):
                 raise PluginError("URL not valid")
@@ -113,7 +114,7 @@ class OrionPlugin(Plugin):
                 resource = parsed_query['id'][0]
 
             #role_name = service + ':' + resource
-            role_name = service + '|' + 'GET' + '|' + resource_type  + '|' + resource
+            role_name = service + '|' + 'GET' + '|' + resource_type  + '|' + resource + '|' attr
             json_role = self._pack_json_role(role_name, application_id)
             if not (keystone_client.get_role_id_by_name(application_id, role_name)):
                 role = keystone_client.create_role(json_role)
