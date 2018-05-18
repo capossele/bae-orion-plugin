@@ -78,7 +78,7 @@ class OrionPlugin(Plugin):
             provider_id = self._get_user_id(keystone_client, domain_id, provider.name)
         
             #provider_role_name = service + ":provider"
-            provider_role_name = "Provider"
+            provider_role_name = "data_provider"
             provider_role_id = keystone_client.get_role_id_by_name(application_id, provider_role_name)
         except HTTPError:
             raise PluginError('It has not been possible to connect with Keystone')
