@@ -60,7 +60,9 @@ class OrionPlugin(Plugin):
         # Extract related information from the asset
         parsed_url = urlparse(asset.download_link)
         
-        service = asset.meta_info['service']
+        service = "" 
+        if 'service' in asset.meta_info:
+            service = asset.meta_info['service']
 
         try:
             # Log the plugin in the Keystone instance
