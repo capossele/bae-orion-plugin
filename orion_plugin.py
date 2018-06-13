@@ -77,7 +77,7 @@ class OrionPlugin(Plugin):
             application_id = asset.meta_info['application_id']
             
             domain_id = keystone_client.get_domain_id(ADMIN_DOMAIN)
-            provider_id = self._get_user_id(keystone_client, domain_id, provider.name)
+            provider_id = provider.name #self._get_user_id(keystone_client, domain_id, provider.name)
         
             #provider_role_name = service + ":provider"
             provider_role_name = "data_provider"
