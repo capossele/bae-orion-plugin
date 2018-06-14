@@ -182,7 +182,7 @@ class OrionPlugin(Plugin):
 
             
             # Check the customer user
-            customer_id = self._get_user_id(keystone_client, asset.meta_info['domain_id'], order.owner_organization.name)
+            customer_id = order.owner_organization.name#self._get_user_id(keystone_client, asset.meta_info['domain_id'], order.owner_organization.name)
 
             role_id = keystone_client.get_role_id_by_name(asset.meta_info['application_id'], asset.meta_info['role'])
             if role_id:
